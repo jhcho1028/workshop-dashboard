@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>워크샵 진행 현황판</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* 탭 네비게이션 */
+        .tab-navigation {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+            margin-top: 10px;
+        }
+
+        .tab-button {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            margin: 0 2px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .tab-button.active {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            transform: none;
+        }
+
+        .tab-button:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+
+        /* 탭 컨텐츠 */
+        .tab-content {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            min-height: 600px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 대시보드 레이아웃 */
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            height: 100%;
+        }
+
+        .groups-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .scoreboard-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        /* 모드 전환 버튼 */
+        .mode-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            gap: 20px;
+        }
+
+        .mode-toggle {
+            display: flex;
+            background: #e2e8f0;
+            border-radius: 8px;
+            padding: 4px;
+        }
+
+        .mode-button {
+            background: transparent;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .mode-button.active {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* 조 그리드 */
+        .groups-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .group-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .group-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .group-card.editing {
+            border-color: #667eea;
+        }
+
+        .group-card.clickable {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .group-card.clickable:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+
+        .group-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .group-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #4a5568;
+            position: relative;
+        }
+
+        .group-number {
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            font-size: 10px;
+            color: #a0aec0;
+            font-weight: normal;
+        }
+
+        .group-custom-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #4a5568;
+            margin-top: 8px;
+            min-height: 24px;
+            display: flex;
+            align-items: center;
+        }
+
+        .group-leader {
+            background: #ffd700;
+            color: #333;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+
+        .group-members {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .member-tag {
+            background: #667eea;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 13px;
+        }
+
+        .member-tag.leader {
+            background: #ffd700;
+            color: #333;
+            font-weight: bold;
+        }
+
+        /* 점수판 */
+        .scoreboard-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4a5568;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .score-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .score-table th,
+        .score-table td {
+            padding: 16px 12px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        .score-table th {
+            background: #4a5568;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .score-table td {
+            font-size: 16px;
+        }
+
+        .score-table tr:nth-child(even) {
+            background: #f7fafc;
+        }
+
+        .score-table tr:hover {
+            background: #edf2f7;
+        }
+
+        .rank-1 { background: #ffd700 !important; color: #333; font-weight: bold; }
+        .rank-2 { background: #c0c0c0 !important; color: #333; font-weight: bold; }
+        .rank-3 { background: #cd7f32 !important; color: white; font-weight: bold; }
+
+        .score-input {
+            width: 80px;
+            padding: 8px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .score-buttons {
+            display: flex;
+            gap: 4px;
+            width: 100%;
+            margin: 6px 0;
+            justify-content: center;
+        }
+
+        .score-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 6px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-height: 28px;
+            min-width: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+        }
+
+        .score-btn:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .score-btn.minus {
+            background: #e53e3e;
+        }
+
+        .score-btn.minus:hover {
+            background: #c53030;
+        }
+
+        /* 전역 점수 조정 패널 */
+        .score-adjust-panel {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 8px 15px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            min-width: 500px;
+            max-width: 600px;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .group-name {
+            color: #2d3748;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: left;
+        }
+
+        .current-score-display {
+            font-size: 11px;
+            color: #4a5568;
+            text-align: right;
+        }
+
+        .current-score-display span {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 13px;
+        }
+
+
+        /* 설정 화면 */
+        .settings-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary {
+            background: #718096;
+        }
+
+        .btn-danger {
+            background: #e53e3e;
+        }
+
+        .btn-success {
+            background: #38a169;
+        }
+
+        /* 참가자 목록 - 엑셀 스타일 */
+        .participant-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .participant-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1px;
+            background: #e2e8f0;
+        }
+
+        .participant-item {
+            background: white;
+            padding: 6px 8px;
+            font-size: 12px;
+            border-radius: 2px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .participant-item:hover {
+            background: #f0f4f8;
+        }
+
+        .participant-item.assigned {
+            background: #e6fffa;
+            color: #234e52;
+            font-weight: 600;
+        }
+
+        .participant-item.leader {
+            background: #fef5e7;
+            color: #744210;
+            font-weight: bold;
+        }
+
+        .participant-item.assigned.leader {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .participant-item .group-badge {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: #667eea;
+            color: white;
+            font-size: 10px;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .participant-item.leader .group-badge {
+            background: #f59e0b;
+        }
+
+        /* 드롭다운 스타일 */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            min-width: 120px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .dropdown-content a {
+            color: #333;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            cursor: pointer;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        @media (max-width: 1200px) {
+            .groups-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .groups-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>점수 현황판</h1>
+            <div id="dataStatus" style="font-size: 14px; margin-top: 10px; padding: 8px; background: rgba(255,255,255,0.1); border-radius: 6px; display: inline-block;">
+                <!-- 데이터 상태가 여기에 표시됩니다 -->
+            </div>
+        </div>
+
+        <!-- 탭 네비게이션 -->
+        <div class="tab-navigation">
+            <button class="tab-button active" onclick="switchTab('dashboard')">대시보드</button>
+            <button class="tab-button" onclick="switchTab('settings')">설정</button>
+        </div>
+
+        <!-- 대시보드 탭 -->
+        <div id="dashboard-tab" class="tab-content active">
+            <div class="mode-controls">
+                <div>
+                    <!-- 전역 점수 조정 패널 -->
+                    <div id="scoreAdjustPanel" class="score-adjust-panel">
+                        <div class="panel-header">
+                            <div class="group-name" id="selectedGroupName">조를 선택하세요</div>
+                            <div class="current-score-display">
+                                현재 점수: <span id="currentScoreValue">0</span>점
+                            </div>
+                        </div>
+                        <div class="score-buttons">
+                            <button class="score-btn minus" onclick="adjustScore(-30)">-30</button>
+                            <button class="score-btn minus" onclick="adjustScore(-20)">-20</button>
+                            <button class="score-btn minus" onclick="adjustScore(-15)">-15</button>
+                            <button class="score-btn minus" onclick="adjustScore(-10)">-10</button>
+                            <button class="score-btn minus" onclick="adjustScore(-5)">-5</button>
+                            <button class="score-btn" onclick="adjustScore(5)">+5</button>
+                            <button class="score-btn" onclick="adjustScore(10)">+10</button>
+                            <button class="score-btn" onclick="adjustScore(15)">+15</button>
+                            <button class="score-btn" onclick="adjustScore(20)">+20</button>
+                            <button class="score-btn" onclick="adjustScore(30)">+30</button>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <button class="btn btn-secondary" onclick="resetScores()">점수 초기화</button>
+                </div>
+            </div>
+
+            <div class="dashboard-layout">
+
+                <!-- 조 현황 섹션 -->
+                <div class="groups-section">
+                    <h2 style="margin-bottom: 20px; color: #4a5568;">조 현황</h2>
+                    <div class="groups-grid" id="groupsGrid">
+                        <!-- 8조가 여기에 표시됩니다 -->
+                    </div>
+                </div>
+
+                <!-- 점수판 섹션 -->
+                <div class="scoreboard-section">
+                    <div class="scoreboard-title">점수판</div>
+                    <table class="score-table" id="scoreTable">
+                        <thead>
+                            <tr>
+                                <th>순위</th>
+                                <th>조명</th>
+                                <th>점수</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scoreTableBody">
+                            <!-- 점수 데이터가 여기에 표시됩니다 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 설정 탭 -->
+        <div id="settings-tab" class="tab-content">
+            <div class="settings-content">
+                <h2 style="margin-bottom: 30px; color: #4a5568; text-align: center;">워크샵 설정</h2>
+                
+                <!-- 참가자 관리 -->
+                <div class="form-group">
+                    <label for="excelInput">참가자 등록 (엑셀 복사/붙여넣기):</label>
+                    <textarea id="excelInput" rows="6" placeholder="엑셀에서 복사한 참가자 이름들을 붙여넣으세요. 각 줄에 한 명씩 입력하거나 탭으로 구분하여 입력하세요."></textarea>
+                </div>
+                <button class="btn" onclick="importParticipants()">참가자 등록</button>
+                <button class="btn btn-danger" onclick="clearAllData()">전체 데이터 삭제</button>
+                
+                <!-- 데이터 백업/복원 -->
+                <div style="margin-top: 20px; padding: 15px; background: #f0f4f8; border-radius: 8px;">
+                    <h4 style="margin-bottom: 10px; color: #4a5568;">데이터 백업/복원</h4>
+                    <p style="font-size: 12px; color: #718096; margin-bottom: 10px;">
+                        브라우저를 닫아도 데이터가 사라지지 않도록 백업하세요.
+                    </p>
+                    <button class="btn btn-success" onclick="downloadData()">데이터 다운로드</button>
+                    <input type="file" id="fileInput" accept=".json" style="display: none;" onchange="uploadData(event)">
+                    <button class="btn btn-secondary" onclick="document.getElementById('fileInput').click()">데이터 업로드</button>
+                </div>
+
+                <!-- 참가자 목록 -->
+                <div class="form-group">
+                    <label>등록된 참가자 목록:</label>
+                    <div class="participant-list" id="participantList">
+                        <!-- 참가자 목록이 여기에 표시됩니다 -->
+                    </div>
+                </div>
+
+                <!-- 조 편성 -->
+                <div class="form-group">
+                    <h3 style="margin-bottom: 15px; color: #4a5568;">조 편성</h3>
+                    
+                    <!-- 조 수 설정 -->
+                    <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <h4 style="margin: 0; color: #4a5568;">현재 ${groups.length}개 조가 설정되어 있습니다.</h4>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <label style="font-size: 14px; color: #718096;">총 조 수:</label>
+                            <input type="number" id="totalGroups" min="1" max="20" value="8" 
+                                   onchange="updateGroupCount(this.value)"
+                                   style="width: 80px; padding: 6px; border: 1px solid #e2e8f0; border-radius: 4px;">
+                            <button class="btn btn-secondary" onclick="applyGroupCount()" style="padding: 6px 12px; font-size: 12px;">적용</button>
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;" id="groupAssignment">
+                        <!-- 조별 편성 인터페이스가 여기에 표시됩니다 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 전역 오류 핸들러
+        window.addEventListener('error', function(e) {
+            console.error('JavaScript 오류:', e.error);
+            alert('페이지에서 오류가 발생했습니다. 브라우저 콘솔을 확인하거나 페이지를 새로고침해주세요.');
+        });
+
+        // 데이터 저장소
+        let participants = [];
+        let groups = [];
+        let scores = {};
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                loadData();
+                initializeGroups();
+                updateDisplay();
+                updateGroupCountDisplay();
+            } catch (error) {
+                console.error('페이지 초기화 중 오류 발생:', error);
+                alert('페이지 로드 중 오류가 발생했습니다. 페이지를 새로고침해주세요.');
+            }
+        });
+
+        // 페이지를 떠날 때 자동 백업 제안
+        window.addEventListener('beforeunload', function(e) {
+            // 데이터가 있는 경우에만 백업 제안
+            if (participants.length > 0 || Object.keys(scores).length > 0) {
+                const message = '데이터가 저장되지 않을 수 있습니다. 설정 탭에서 데이터를 다운로드하시겠습니까?';
+                e.returnValue = message;
+                return message;
+            }
+        });
+
+
+        // 데이터 저장
+        function saveData() {
+            try {
+                localStorage.setItem('workshopParticipants', JSON.stringify(participants));
+                localStorage.setItem('workshopGroups', JSON.stringify(groups));
+                localStorage.setItem('workshopScores', JSON.stringify(scores));
+            } catch (error) {
+                console.error('데이터 저장 중 오류 발생:', error);
+                alert('데이터 저장에 실패했습니다. 브라우저 설정을 확인해주세요.');
+            }
+        }
+
+        // 데이터 불러오기
+        function loadData() {
+            try {
+                const savedParticipants = localStorage.getItem('workshopParticipants');
+                const savedGroups = localStorage.getItem('workshopGroups');
+                const savedScores = localStorage.getItem('workshopScores');
+
+                if (savedParticipants) {
+                    participants = JSON.parse(savedParticipants);
+                }
+                if (savedGroups) {
+                    groups = JSON.parse(savedGroups);
+                }
+                if (savedScores) {
+                    scores = JSON.parse(savedScores);
+                }
+            } catch (error) {
+                console.error('데이터 불러오기 중 오류 발생:', error);
+                alert('데이터 불러오기에 실패했습니다. 브라우저 설정을 확인해주세요.');
+                // 기본값으로 초기화
+                participants = [];
+                groups = [];
+                scores = {};
+            }
+        }
+
+        // 8조 초기화
+        function initializeGroups() {
+            if (groups.length === 0) {
+                for (let i = 1; i <= 8; i++) {
+                    groups.push({
+                        id: i,
+                        name: `${i}조`,
+                        customName: '',
+                        leader: null,
+                        members: [],
+                        score: 0
+                    });
+                    scores[`${i}조`] = 0;
+                }
+            }
+        }
+
+        // 탭 전환
+        function switchTab(tabName) {
+            try {
+                // 모든 탭 버튼 비활성화
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                
+                // 선택된 탭 활성화
+                event.target.classList.add('active');
+                document.getElementById(tabName + '-tab').classList.add('active');
+                
+                if (tabName === 'settings') {
+                    updateGroupAssignment();
+                    updateGroupCountDisplay();
+                }
+            } catch (error) {
+                console.error('탭 전환 중 오류 발생:', error);
+                alert('탭 전환 중 오류가 발생했습니다.');
+            }
+        }
+
+
+        // 참가자 등록 (엑셀 복사/붙여넣기)
+        function importParticipants() {
+            const excelInput = document.getElementById('excelInput');
+            const data = excelInput.value.trim();
+            
+            if (!data) {
+                alert('참가자 데이터를 입력해주세요.');
+                return;
+            }
+
+            const lines = data.split('\n');
+            let addedCount = 0;
+
+            lines.forEach(line => {
+                const names = line.split('\t').filter(name => name.trim());
+                names.forEach(name => {
+                    const trimmedName = name.trim();
+                    if (trimmedName && !participants.find(p => p.name === trimmedName)) {
+                        participants.push({
+                            id: Date.now() + Math.random(),
+                            name: trimmedName
+                        });
+                        addedCount++;
+                    }
+                });
+            });
+
+            excelInput.value = '';
+            saveData();
+            updateDisplay();
+            updateGroupAssignment();
+            alert(`${addedCount}명의 참가자가 등록되었습니다.`);
+        }
+
+        // 전체 데이터 삭제
+        function clearAllData() {
+            if (confirm('모든 데이터를 삭제하시겠습니까?')) {
+                participants = [];
+                groups = [];
+                scores = {};
+                initializeGroups();
+                saveData();
+                updateDisplay();
+                updateGroupAssignment();
+            }
+        }
+
+        // 조 편성 인터페이스 업데이트
+        function updateGroupAssignment() {
+            const container = document.getElementById('groupAssignment');
+            container.innerHTML = '';
+
+            groups.forEach(group => {
+                const groupDiv = document.createElement('div');
+                groupDiv.style.cssText = `
+                    background: white;
+                    border-radius: 10px;
+                    padding: 15px;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                    border: 2px solid #e2e8f0;
+                `;
+
+                groupDiv.innerHTML = `
+                    <h4 style="margin-bottom: 10px; color: #4a5568;">${group.name}</h4>
+                    <div style="margin-bottom: 10px;">
+                        <label style="font-size: 12px; color: #718096;">조 이름:</label>
+                        <input type="text" id="customName-${group.id}" placeholder="커스텀 조 이름 (선택사항)" 
+                               value="${group.customName || ''}"
+                               onchange="updateCustomName(${group.id}, this.value)"
+                               style="width: 100%; margin-top: 5px; padding: 6px; border: 1px solid #e2e8f0; border-radius: 4px;">
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <label style="font-size: 12px; color: #718096;">조장:</label>
+                        <input type="text" id="leader-${group.id}" placeholder="조장 이름 입력" 
+                               value="${group.leader ? participants.find(p => p.id === group.leader)?.name || '' : ''}"
+                               onchange="assignLeaderByName(${group.id}, this.value)"
+                               style="width: 100%; margin-top: 5px; padding: 6px; border: 1px solid #e2e8f0; border-radius: 4px;">
+                    </div>
+                    <div>
+                        <label style="font-size: 12px; color: #718096;">조원 (6명, 쉼표로 구분):</label>
+                        <textarea id="members-${group.id}" placeholder="조원 이름을 쉼표로 구분하여 입력" 
+                                  onchange="assignMembersByName(${group.id}, this.value)"
+                                  style="width: 100%; height: 80px; margin-top: 5px; padding: 6px; border: 1px solid #e2e8f0; border-radius: 4px; resize: vertical;">${group.members.map(id => participants.find(p => p.id === id)?.name).filter(name => name).join(', ')}</textarea>
+                    </div>
+                `;
+                container.appendChild(groupDiv);
+            });
+        }
+
+        // 커스텀 조 이름 업데이트
+        function updateCustomName(groupId, customName) {
+            const group = groups.find(g => g.id === groupId);
+            if (group) {
+                group.customName = customName.trim();
+                saveData();
+                updateDisplay();
+            }
+        }
+
+        // 조 수 업데이트 (입력값 변경 시)
+        function updateGroupCount(newCount) {
+            const count = parseInt(newCount);
+            if (count < 1 || count > 20) {
+                alert('조 수는 1개 이상 20개 이하여야 합니다.');
+                document.getElementById('totalGroups').value = groups.length;
+                return;
+            }
+        }
+
+        // 조 수 적용
+        function applyGroupCount() {
+            const newCount = parseInt(document.getElementById('totalGroups').value);
+            const currentCount = groups.length;
+            
+            if (newCount === currentCount) {
+                return;
+            }
+
+            if (confirm(`${currentCount}개 조에서 ${newCount}개 조로 변경하시겠습니까?\n기존 조 편성 데이터가 변경될 수 있습니다.`)) {
+                if (newCount > currentCount) {
+                    // 조 추가
+                    for (let i = currentCount + 1; i <= newCount; i++) {
+                        groups.push({
+                            id: i,
+                            name: `${i}조`,
+                            customName: '',
+                            leader: null,
+                            members: [],
+                            score: 0
+                        });
+                        scores[`${i}조`] = 0;
+                    }
+                } else {
+                    // 조 제거
+                    for (let i = currentCount; i > newCount; i--) {
+                        const groupIndex = groups.findIndex(g => g.id === i);
+                        if (groupIndex !== -1) {
+                            const groupName = groups[groupIndex].name;
+                            groups.splice(groupIndex, 1);
+                            delete scores[groupName];
+                        }
+                    }
+                }
+                
+                saveData();
+                updateDisplay();
+                updateGroupAssignment();
+                updateGroupCountDisplay();
+                alert(`${newCount}개 조로 변경되었습니다.`);
+            } else {
+                document.getElementById('totalGroups').value = currentCount;
+            }
+        }
+
+        // 조 수 표시 업데이트
+        function updateGroupCountDisplay() {
+            const display = document.querySelector('#groupAssignment').previousElementSibling.querySelector('h4');
+            if (display) {
+                display.textContent = `조 수 설정 (현재 ${groups.length}개 조가 설정되어 있습니다.)`;
+            }
+        }
+
+        // 이름으로 조장 할당
+        function assignLeaderByName(groupId, leaderName) {
+            const group = groups.find(g => g.id === groupId);
+            if (group && leaderName) {
+                const leader = participants.find(p => p.name === leaderName);
+                if (leader) {
+                    // 중복 확인
+                    const duplicateGroups = groups.filter(g => g.id !== groupId && g.leader === leader.id);
+                    if (duplicateGroups.length > 0) {
+                        const duplicateGroupNames = duplicateGroups.map(g => g.name).join(', ');
+                        if (confirm(`'${leaderName}'이(가) 이미 ${duplicateGroupNames}의 조장으로 설정되어 있습니다.\n그래도 계속하시겠습니까?`)) {
+                            // 기존 조장 해제
+                            duplicateGroups.forEach(g => g.leader = null);
+                            group.leader = leader.id;
+                        } else {
+                            // 취소 시 입력값 초기화
+                            document.getElementById(`leader-${groupId}`).value = '';
+                            return;
+                        }
+                    } else {
+                        group.leader = leader.id;
+                    }
+                } else {
+                    alert(`'${leaderName}' 참가자를 찾을 수 없습니다.`);
+                    document.getElementById(`leader-${groupId}`).value = '';
+                    return;
+                }
+                saveData();
+                updateDisplay();
+            }
+        }
+
+        // 이름으로 조원 할당
+        function assignMembersByName(groupId, memberNames) {
+            const group = groups.find(g => g.id === groupId);
+            if (group) {
+                const names = memberNames.split(',').map(name => name.trim()).filter(name => name);
+                const newMembers = [];
+                const duplicates = [];
+                
+                names.forEach(memberName => {
+                    const member = participants.find(p => p.name === memberName);
+                    if (member) {
+                        // 중복 확인 (다른 조에 이미 속한 경우)
+                        const existingGroups = groups.filter(g => g.id !== groupId && g.members.includes(member.id));
+                        if (existingGroups.length > 0) {
+                            duplicates.push({
+                                name: memberName,
+                                groups: existingGroups.map(g => g.name)
+                            });
+                        } else {
+                            newMembers.push(member.id);
+                        }
+                    }
+                });
+                
+                // 중복이 있는 경우 알림
+                if (duplicates.length > 0) {
+                    const duplicateInfo = duplicates.map(d => 
+                        `'${d.name}' (이미 ${d.groups.join(', ')}에 속함)`
+                    ).join('\n');
+                    
+                    if (confirm(`다음 참가자들이 이미 다른 조에 속해 있습니다:\n\n${duplicateInfo}\n\n그래도 계속하시겠습니까?\n(기존 조에서 제거됩니다)`)) {
+                        // 기존 조에서 제거
+                        duplicates.forEach(duplicate => {
+                            const member = participants.find(p => p.name === duplicate.name);
+                            if (member) {
+                                duplicate.groups.forEach(groupName => {
+                                    const existingGroup = groups.find(g => g.name === groupName);
+                                    if (existingGroup) {
+                                        existingGroup.members = existingGroup.members.filter(id => id !== member.id);
+                                    }
+                                });
+                                newMembers.push(member.id);
+                            }
+                        });
+                    } else {
+                        // 취소 시 입력값 초기화
+                        document.getElementById(`members-${groupId}`).value = group.members.map(id => 
+                            participants.find(p => p.id === id)?.name
+                        ).filter(name => name).join(', ');
+                        return;
+                    }
+                }
+                
+                // 조원 수 제한 확인
+                if (newMembers.length > 6) {
+                    alert(`조원은 최대 6명까지 가능합니다. 처음 6명만 할당됩니다.`);
+                    newMembers.splice(6);
+                }
+                
+                group.members = newMembers;
+                saveData();
+                updateDisplay();
+            }
+        }
+
+
+        // 점수 업데이트
+        function updateScore(groupName, newScore) {
+            scores[groupName] = parseInt(newScore) || 0;
+            const group = groups.find(g => g.name === groupName);
+            if (group) {
+                group.score = scores[groupName];
+            }
+            saveData();
+            updateDisplay();
+        }
+
+        // 점수 추가/차감
+        function addScore(groupName, points) {
+            const currentScore = scores[groupName] || 0;
+            const newScore = Math.max(0, currentScore + points); // 음수 방지
+            updateScore(groupName, newScore);
+        }
+
+
+
+        // 전역 변수: 현재 선택된 조
+        let selectedGroupName = null;
+
+        // 조 선택
+        function selectGroupForScoreAdjustment(groupName, displayName) {
+            selectedGroupName = groupName;
+            
+            // 패널 헤더 업데이트
+            document.getElementById('selectedGroupName').textContent = displayName;
+            document.getElementById('currentScoreValue').textContent = scores[groupName] || 0;
+        }
+
+        // 점수 조정
+        function adjustScore(points) {
+            if (selectedGroupName) {
+                addScore(selectedGroupName, points);
+                // 현재 점수 업데이트
+                document.getElementById('currentScoreValue').textContent = scores[selectedGroupName] || 0;
+            }
+        }
+
+
+        // 점수 초기화
+        function resetScores() {
+            if (confirm('모든 점수를 초기화하시겠습니까?')) {
+                groups.forEach(group => {
+                    group.score = 0;
+                    scores[group.name] = 0;
+                });
+                saveData();
+                updateDisplay();
+            }
+        }
+
+        // 화면 업데이트
+        function updateDisplay() {
+            updateGroupsGrid();
+            updateScoreboard();
+            updateParticipantList();
+            updateDataStatus();
+        }
+
+        // 데이터 상태 업데이트
+        function updateDataStatus() {
+            const statusDiv = document.getElementById('dataStatus');
+            if (!statusDiv) return;
+            
+            const participantCount = participants.length;
+            const groupCount = groups.length;
+            const hasData = participantCount > 0 || Object.keys(scores).length > 0;
+            
+            if (hasData) {
+                statusDiv.innerHTML = `
+                    <span style="color: #4ade80;">✓ 데이터 저장됨</span> 
+                    (참가자: ${participantCount}명, 조: ${groupCount}개) 
+                    <span style="font-size: 12px; opacity: 0.8;">- 브라우저를 닫기 전에 설정에서 백업하세요</span>
+                `;
+                statusDiv.style.background = 'rgba(74, 222, 128, 0.1)';
+            } else {
+                statusDiv.innerHTML = `
+                    <span style="color: #fbbf24;">⚠ 데이터 없음</span> 
+                    - 설정 탭에서 참가자를 등록하세요
+                `;
+                statusDiv.style.background = 'rgba(251, 191, 36, 0.1)';
+            }
+        }
+
+        // 조 그리드 업데이트
+        function updateGroupsGrid() {
+            const grid = document.getElementById('groupsGrid');
+            grid.innerHTML = '';
+
+            groups.forEach(group => {
+                const groupCard = document.createElement('div');
+                groupCard.className = 'group-card clickable';
+                groupCard.onclick = () => selectGroupForScoreAdjustment(group.name, group.customName || group.name);
+
+                const leader = group.leader ? participants.find(p => p.id === group.leader) : null;
+                const members = group.members.map(id => participants.find(p => p.id === id)).filter(p => p);
+                
+                groupCard.innerHTML = `
+                    <div class="group-header">
+                        <div class="group-title">
+                            <div class="group-custom-name">${group.customName || group.name}</div>
+                        </div>
+                        <div class="group-score">${scores[group.name] || 0}점</div>
+                    </div>
+                    ${leader ? `<div class="group-leader">${leader.name}</div>` : '<div style="color: #a0aec0; font-size: 14px;">조장 미지정</div>'}
+                    <div class="group-members">
+                        ${members.map(member => `<span class="member-tag">${member.name}</span>`).join('')}
+                        ${members.length === 0 ? '<span style="color: #a0aec0; font-size: 14px;">조원 없음</span>' : ''}
+                    </div>
+                `;
+                grid.appendChild(groupCard);
+            });
+        }
+
+
+        // 점수판 업데이트
+        function updateScoreboard() {
+            const tbody = document.getElementById('scoreTableBody');
+            tbody.innerHTML = '';
+
+            // 점수순으로 정렬
+            const sortedGroups = [...groups].sort((a, b) => (scores[b.name] || 0) - (scores[a.name] || 0));
+
+            sortedGroups.forEach((group, index) => {
+                const row = document.createElement('tr');
+                const rankClass = index < 3 ? `rank-${index + 1}` : '';
+                
+                row.innerHTML = `
+                    <td class="${rankClass}">${index + 1}위</td>
+                    <td class="${rankClass}" style="text-align: left; padding-left: 20px;">
+                        <strong style="font-size: 16px;">${group.customName || group.name}</strong>
+                    </td>
+                    <td class="${rankClass}">
+                        <strong>${scores[group.name] || 0}</strong>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // 참가자 목록 업데이트
+        function updateParticipantList() {
+            const list = document.getElementById('participantList');
+            list.innerHTML = '';
+
+            if (participants.length === 0) {
+                list.innerHTML = '<div style="text-align: center; color: #a0aec0; padding: 20px;">등록된 참가자가 없습니다.</div>';
+                return;
+            }
+
+            const grid = document.createElement('div');
+            grid.className = 'participant-grid';
+
+            participants.forEach(participant => {
+                const item = document.createElement('div');
+                item.className = 'participant-item';
+                
+                // 조 할당 상태 확인
+                const assignedGroup = groups.find(g => g.members.includes(participant.id));
+                const isLeader = groups.find(g => g.leader === participant.id);
+                
+                if (isLeader) {
+                    item.classList.add('leader');
+                    const groupName = isLeader.name;
+                    item.innerHTML = `
+                        <span>${participant.name}</span>
+                        <span class="group-badge">${groupName}</span>
+                    `;
+                } else if (assignedGroup) {
+                    item.classList.add('assigned');
+                    const groupName = assignedGroup.name;
+                    item.innerHTML = `
+                        <span>${participant.name}</span>
+                        <span class="group-badge">${groupName}</span>
+                    `;
+                } else {
+                    item.innerHTML = `<span>${participant.name}</span>`;
+                }
+
+                // 클릭으로 삭제
+                item.onclick = () => removeParticipant(participant.id);
+                grid.appendChild(item);
+            });
+
+            list.appendChild(grid);
+        }
+
+        // 참가자 삭제
+        function removeParticipant(participantId) {
+            if (confirm('이 참가자를 삭제하시겠습니까?')) {
+                participants = participants.filter(p => p.id !== participantId);
+                // 해당 참가자가 속한 조에서도 제거
+                groups.forEach(group => {
+                    if (group.leader === participantId) {
+                        group.leader = null;
+                    }
+                    group.members = group.members.filter(id => id !== participantId);
+                });
+                saveData();
+                updateDisplay();
+                updateGroupAssignment();
+            }
+        }
+
+        // 데이터 다운로드
+        function downloadData() {
+            try {
+                const data = {
+                    participants: participants,
+                    groups: groups,
+                    scores: scores,
+                    timestamp: new Date().toISOString(),
+                    version: '1.0'
+                };
+                
+                const dataStr = JSON.stringify(data, null, 2);
+                const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(dataBlob);
+                link.download = `workshop-data-${new Date().toISOString().split('T')[0]}.json`;
+                link.click();
+                
+                alert('데이터가 다운로드되었습니다. 파일을 안전한 곳에 보관하세요.');
+            } catch (error) {
+                console.error('데이터 다운로드 중 오류 발생:', error);
+                alert('데이터 다운로드에 실패했습니다.');
+            }
+        }
+
+        // 데이터 업로드
+        function uploadData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    // 데이터 유효성 검사
+                    if (!data.participants || !data.groups || !data.scores) {
+                        throw new Error('잘못된 데이터 형식입니다.');
+                    }
+                    
+                    if (confirm('기존 데이터를 모두 덮어쓰시겠습니까?')) {
+                        participants = data.participants || [];
+                        groups = data.groups || [];
+                        scores = data.scores || {};
+                        
+                        saveData();
+                        updateDisplay();
+                        updateGroupAssignment();
+                        updateGroupCountDisplay();
+                        
+                        alert('데이터가 성공적으로 복원되었습니다.');
+                    }
+                } catch (error) {
+                    console.error('데이터 업로드 중 오류 발생:', error);
+                    alert('데이터 업로드에 실패했습니다. 파일 형식을 확인해주세요.');
+                }
+            };
+            reader.readAsText(file);
+            
+            // 파일 입력 초기화
+            event.target.value = '';
+        }
+    </script>
+</body>
+</html>
