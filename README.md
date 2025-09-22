@@ -1,8 +1,9 @@
-# Workshop Dashboard
+# 워크샵 대시보드 (Electron 앱)
 
-워크샵 진행을 위한 대화형 점수 현황판 및 조 관리 시스템입니다.
+워크샵 진행을 위한 대화형 점수 현황판 및 조 관리 시스템입니다. Electron으로 제작되어 데스크톱 앱으로 실행됩니다.
 
-![Workshop Dashboard](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![Electron](https://img.shields.io/badge/Electron-191970?style=for-the-badge&logo=Electron&logoColor=white)
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 
@@ -21,11 +22,11 @@
 - 커스텀 조 이름 설정
 - 중복 할당 방지 시스템
 
-### 💾 데이터 백업 및 복원
-- JSON 파일로 데이터 다운로드/업로드
-- 브라우저 로컬 스토리지 자동 저장
-- 페이지 종료 시 백업 알림
-- 데이터 상태 실시간 표시
+### 💾 자동 파일 저장
+- **자동 저장**: `workshop-data.json` 파일에 자동으로 저장
+- **폴더 이동**: 앱과 같은 폴더를 옮기면 그대로 작동
+- **오프라인 완전 지원**: 인터넷 연결 없이도 완전히 동작
+- **백업 기능**: 수동 백업 파일 생성 가능
 
 ### 🎨 사용자 친화적 인터페이스
 - 반응형 디자인 (모바일 지원)
@@ -35,61 +36,90 @@
 
 ## 📱 사용법
 
-### 1. 기본 설정
+### 1. 앱 실행
+```bash
+npm start
+```
+
+### 2. 기본 설정
 1. **설정** 탭으로 이동
 2. 엑셀에서 참가자 이름을 복사하여 붙여넣기
 3. **참가자 등록** 버튼 클릭
 4. 조 수 설정 및 조 편성
 
-### 2. 점수 관리
+### 3. 점수 관리
 1. **대시보드** 탭에서 조 카드 클릭
 2. 점수 조정 패널에서 원하는 점수 버튼 클릭
 3. 실시간으로 점수판 업데이트 확인
 
-### 3. 데이터 백업
-1. **설정** 탭에서 **데이터 다운로드** 클릭
-2. JSON 파일을 안전한 곳에 저장
-3. 필요시 **데이터 업로드**로 복원
+### 4. 파일 관리
+- **자동 저장**: 데이터 변경 시 자동으로 `workshop-data.json`에 저장
+- **외부 파일 가져오기**: 다른 JSON 파일에서 데이터 복원
+- **백업 파일 저장**: 안전한 백업 파일 생성
 
 ## 🛠️ 기술 스택
 
 - **Frontend**: HTML5, CSS3, JavaScript (ES6+)
-- **Storage**: LocalStorage, File API
+- **Desktop**: Electron
+- **Storage**: 로컬 파일 시스템 (JSON)
 - **Design**: CSS Grid, Flexbox, Gradient
-- **Compatibility**: 모든 모던 브라우저 지원
+- **Compatibility**: Windows, macOS, Linux
 
 ## 📋 시스템 요구사항
 
-- 모던 웹 브라우저 (Chrome, Firefox, Safari, Edge)
-- JavaScript 활성화
-- LocalStorage 지원
+- Node.js 16.0.0 이상
+- Windows 10/11, macOS 10.14+, 또는 Linux
+- 최소 4GB RAM
+- 100MB 여유 디스크 공간
 
-## 🚀 빠른 시작
+## 🚀 설치 및 실행
 
-1. **파일 다운로드**
-   ```bash
-   git clone https://github.com/jhcho1028/workshop-dashboard.git
-   cd workshop-dashboard
-   ```
+### 개발 환경에서 실행
+```bash
+# 저장소 클론
+git clone https://github.com/jhcho1028/workshop-dashboard.git
+cd workshop-dashboard
 
-2. **브라우저에서 열기**
-   - `workshop-dashboard.html` 파일을 브라우저에서 열기
-   - 또는 로컬 서버 실행
+# 의존성 설치
+npm install
 
-3. **사용 시작**
-   - 설정 탭에서 참가자 등록
-   - 대시보드에서 점수 관리 시작
+# 앱 실행
+npm start
+```
+
+### 실행 파일 빌드
+```bash
+# Windows 실행 파일 생성
+npm run build-win
+
+# macOS 실행 파일 생성
+npm run build-mac
+
+# Linux 실행 파일 생성
+npm run build-linux
+
+# 모든 플랫폼용 실행 파일 생성
+npm run dist
+```
 
 ## 📁 프로젝트 구조
 
 ```
 workshop-dashboard/
-├── workshop-dashboard.html    # 메인 HTML 파일
-├── README.md                 # 프로젝트 문서
-└── .gitignore               # Git 무시 파일
+├── main.js              # Electron 메인 프로세스
+├── preload.js           # 보안 통신 브리지
+├── index.html           # 메인 HTML 파일
+├── package.json         # 프로젝트 설정
+├── workshop-data.json   # 데이터 파일 (자동 생성)
+└── dist/                # 빌드된 실행 파일
 ```
 
 ## 🔧 주요 기능 상세
+
+### 자동 파일 저장
+- **위치**: 앱과 같은 폴더의 `workshop-data.json`
+- **타이밍**: 데이터 변경 시마다 자동 저장
+- **이식성**: 폴더 전체를 옮기면 그대로 작동
 
 ### 참가자 관리
 - **엑셀 호환**: 탭으로 구분된 데이터 지원
@@ -117,15 +147,27 @@ workshop-dashboard/
 
 ## 🔒 데이터 보안
 
-- **로컬 저장**: 모든 데이터는 브라우저에만 저장
-- **파일 백업**: JSON 형태로 안전한 백업
+- **로컬 저장**: 모든 데이터는 로컬 파일에만 저장
+- **오프라인 동작**: 인터넷 연결 없이도 완전히 동작
 - **개인정보 보호**: 서버 전송 없음
+- **백업 지원**: 수동 백업 파일 생성 가능
+
+## 🆚 웹 버전과의 차이점
+
+| 기능 | 웹 버전 | Electron 앱 |
+|------|---------|-------------|
+| 파일 저장 | 다운로드 폴더 | 같은 폴더에 자동 저장 |
+| 파일 로드 | 수동으로 파일 선택 | 자동으로 로드 |
+| 폴더 이동 | 수동으로 파일 복사 | 폴더만 이동하면 됨 |
+| 설치 | 브라우저에서 열기 | 실행 파일 설치 |
+| 오프라인 | 완전 오프라인 | 완전 오프라인 |
+| 성능 | 브라우저 의존 | 네이티브 성능 |
 
 ## 🐛 알려진 이슈
 
-- 일부 구형 브라우저에서 LocalStorage 제한
-- 시크릿 모드에서 데이터 저장 불가
-- 브라우저 캐시 정리 시 데이터 손실 가능
+- 일부 구형 운영체제에서 호환성 문제 가능
+- 대용량 데이터 처리 시 성능 저하 가능
+- 파일 권한 문제로 저장 실패 가능
 
 ## 🤝 기여하기
 

@@ -1,0 +1,57 @@
+{
+  "name": "workshop-dashboard",
+  "version": "1.0.0",
+  "description": "워크샵 진행을 위한 대화형 점수 현황판 및 조 관리 시스템",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "build-win": "electron-builder --win",
+    "build-mac": "electron-builder --mac",
+    "build-linux": "electron-builder --linux",
+    "dist": "electron-builder --publish=never"
+  },
+  "keywords": [
+    "workshop",
+    "dashboard",
+    "scoreboard",
+    "team-management",
+    "electron"
+  ],
+  "author": "jhcho1028",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^27.0.0",
+    "electron-builder": "^24.6.4"
+  },
+  "build": {
+    "appId": "com.workshop.dashboard",
+    "productName": "워크샵 대시보드",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "renderer.js",
+      "index.html",
+      "styles.css",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis",
+      "sign": false
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "linux": {
+      "target": "AppImage"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  }
+}
