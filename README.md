@@ -74,20 +74,29 @@ npm start
 
 ## 🚀 설치 및 실행
 
-### 개발 환경에서 실행
+### 📥 **방법 1: 간단한 실행** (추천)
+1. **Node.js 설치**: [https://nodejs.org/](https://nodejs.org/)에서 다운로드
+2. **프로젝트 다운로드**: 이 저장소를 ZIP으로 다운로드하거나 클론
+3. **실행**: `start.bat` 파일 더블클릭 (Windows) 또는 터미널에서 `npm start`
+
+### 💻 **방법 2: 터미널 사용**
 ```bash
 # 저장소 클론
 git clone https://github.com/jhcho1028/workshop-dashboard.git
 cd workshop-dashboard
 
-# 의존성 설치
+# 의존성 설치 (처음 한 번만)
 npm install
 
 # 앱 실행
 npm start
 ```
 
-### 실행 파일 빌드
+### 🌐 **방법 3: 웹 버전** (가장 간단)
+- `workshop-dashboard.html` 파일을 브라우저에서 열기
+- 별도 설치 없이 바로 사용 가능
+
+### 📦 **방법 4: 실행 파일 빌드**
 ```bash
 # Windows 실행 파일 생성
 npm run build-win
@@ -97,9 +106,6 @@ npm run build-mac
 
 # Linux 실행 파일 생성
 npm run build-linux
-
-# 모든 플랫폼용 실행 파일 생성
-npm run dist
 ```
 
 ## 📁 프로젝트 구조

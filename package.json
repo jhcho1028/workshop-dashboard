@@ -5,11 +5,14 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
+    "dev": "electron .",
     "build": "electron-builder",
     "build-win": "electron-builder --win",
     "build-mac": "electron-builder --mac",
     "build-linux": "electron-builder --linux",
-    "dist": "electron-builder --publish=never"
+    "dist": "electron-builder --publish=never",
+    "install-deps": "npm install",
+    "setup": "npm install && npm start"
   },
   "keywords": [
     "workshop",
