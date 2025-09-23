@@ -565,7 +565,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>점수 현황판</h1>
+            <h1 style="display: inline;">소</h1><h4 style="display: inline;">프트웨어</h4><h1 style="display: inline;">다</h1><h4 style="display: inline;">함께</h4><h4 style="display: inline;"> 워크</h4><h1 style="display: inline;">샵</h1>
         </div>
         
         <!-- 데이터 상태 표시 (우상단) -->
@@ -781,6 +781,39 @@
                             <div style="font-size: 12px; color: #a0aec0;">
                                 💡 참가자들에게 QR코드나 주소를 공유하여 채팅방에 참여하도록 안내하세요
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 문장 퍼즐 게임 -->
+                <div class="form-group">
+                    <h3 style="margin-bottom: 20px; color: #4a5568;">문장 퍼즐 맞추기</h3>
+                    
+                    <!-- 문장 입력 -->
+                    <div style="background: #f8f9fa; border-radius: 10px; padding: 20px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 15px; color: #4a5568;">문장 입력</h4>
+                        <div style="margin-bottom: 15px;">
+                            <label style="font-size: 14px; color: #4a5568; font-weight: 600; display: block; margin-bottom: 8px;">퍼즐로 만들 문장을 입력하세요:</label>
+                            <input type="text" id="puzzleSentence" placeholder="예: 오늘은 모두 함께 웃어보아요" 
+                                   style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 16px;">
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn" onclick="createPuzzle()" style="flex: 1;">퍼즐 생성</button>
+                            <button class="btn btn-secondary" onclick="resetPuzzle()" style="flex: 1;">초기화</button>
+                        </div>
+                    </div>
+                    
+                    <!-- 퍼즐 게임 영역 -->
+                    <div id="puzzleGameArea" style="background: #f8f9fa; border-radius: 10px; padding: 20px; border: 1px solid #e2e8f0; display: none;">
+                        <h4 style="margin-bottom: 15px; color: #4a5568;">🧩 퍼즐판</h4>
+                        <div style="text-align: center; margin-bottom: 20px;">
+                            <div id="puzzleGrid" style="display: inline-grid; gap: 4px; margin-bottom: 15px;">
+                                <!-- 퍼즐 그리드가 여기에 표시됩니다 -->
+                            </div>
+                        </div>
+                        
+                        <div style="text-align: center;">
+                            <button class="btn btn-secondary" onclick="shufflePuzzle()">다시 섞기</button>
                         </div>
                     </div>
                 </div>
@@ -1788,6 +1821,97 @@
             
             const display = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             document.getElementById('stopwatchDisplay').textContent = display;
+        }
+
+        // 문장 퍼즐 게임 관련 변수
+        let puzzleChars = [];
+        let shuffledChars = [];
+        let correctSentence = '';
+
+        // 퍼즐 생성
+        function createPuzzle() {
+            const sentence = document.getElementById('puzzleSentence').value.trim();
+            
+            if (!sentence) {
+                alert('문장을 입력해주세요.');
+                return;
+            }
+            
+            // 공백 제거하고 글자 배열로 변환
+            puzzleChars = sentence.replace(/\s/g, '').split('');
+            correctSentence = sentence;
+            
+            if (puzzleChars.length < 4) {
+                alert('최소 4글자 이상의 문장을 입력해주세요.');
+                return;
+            }
+            
+            // 글자 섞기
+            shuffledChars = [...puzzleChars].sort(() => Math.random() - 0.5);
+            
+            // 퍼즐 그리드 생성
+            createPuzzleGrid();
+            
+            // 게임 영역 표시
+            document.getElementById('puzzleGameArea').style.display = 'block';
+        }
+
+        // 퍼즐 그리드 생성
+        function createPuzzleGrid() {
+            const grid = document.getElementById('puzzleGrid');
+            grid.innerHTML = '';
+            
+            // 그리드 크기 계산 (최대 4열)
+            const cols = Math.min(4, Math.ceil(Math.sqrt(shuffledChars.length)));
+            const rows = Math.ceil(shuffledChars.length / cols);
+            
+            grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+            grid.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+            
+            shuffledChars.forEach((char, index) => {
+                const cell = document.createElement('div');
+                cell.className = 'puzzle-cell';
+                cell.style.cssText = `
+                    width: 60px;
+                    height: 60px;
+                    background: white;
+                    border: 2px solid #e2e8f0;
+                    border-radius: 8px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 20px;
+                    font-weight: bold;
+                    color: #4a5568;
+                    transition: all 0.2s ease;
+                    user-select: none;
+                `;
+                
+                cell.textContent = char;
+                grid.appendChild(cell);
+            });
+        }
+
+
+        // 퍼즐 다시 섞기
+        function shufflePuzzle() {
+            if (shuffledChars.length === 0) {
+                alert('먼저 퍼즐을 생성해주세요.');
+                return;
+            }
+            
+            shuffledChars = [...puzzleChars].sort(() => Math.random() - 0.5);
+            createPuzzleGrid();
+        }
+
+        // 퍼즐 초기화
+        function resetPuzzle() {
+            puzzleChars = [];
+            shuffledChars = [];
+            correctSentence = '';
+            
+            document.getElementById('puzzleSentence').value = '';
+            document.getElementById('puzzleGameArea').style.display = 'none';
         }
 
         // 카카오톡 오픈채팅방 관련 함수들
