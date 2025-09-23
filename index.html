@@ -864,6 +864,8 @@
             totalGroups: 8,
             maxMembersPerGroup: 6
         };
+        let bingoItems = [];
+        let checkedItems = new Set(); // 체크된 항목들을 저장
 
         // JSON 데이터베이스 파일명
         const DATABASE_FILENAME = 'workshop-data.json';
@@ -893,6 +895,8 @@
                 localStorage.setItem('workshopGroups', JSON.stringify(groups));
                 localStorage.setItem('workshopScores', JSON.stringify(scores));
                 localStorage.setItem('workshopSettings', JSON.stringify(settings));
+                localStorage.setItem('bingoItems', JSON.stringify(bingoItems));
+                localStorage.setItem('checkedItems', JSON.stringify(Array.from(checkedItems)));
                 
                 // Electron 파일 시스템에 저장
                 const data = {
@@ -901,7 +905,9 @@
                     participants: participants,
                     groups: groups,
                     scores: scores,
-                    settings: settings
+                    settings: settings,
+                    bingoItems: bingoItems,
+                    checkedItems: Array.from(checkedItems)
                 };
                 
                 const success = await window.electronAPI.writeData(data);
@@ -923,7 +929,9 @@
                     participants: participants,
                     groups: groups,
                     scores: scores,
-                    settings: settings
+                    settings: settings,
+                    bingoItems: bingoItems,
+                    checkedItems: Array.from(checkedItems)
                 };
                 
                 // Electron 파일 시스템에 저장
@@ -956,6 +964,8 @@
                         totalGroups: 8,
                         maxMembersPerGroup: 6
                     };
+                    bingoItems = fileData.bingoItems || [];
+                    checkedItems = new Set(fileData.checkedItems || []);
                     console.log('JSON 파일에서 데이터를 로드했습니다.');
                 } else {
                     // 파일이 없으면 localStorage에서 로드
@@ -963,6 +973,8 @@
                     const savedGroups = localStorage.getItem('workshopGroups');
                     const savedScores = localStorage.getItem('workshopScores');
                     const savedSettings = localStorage.getItem('workshopSettings');
+                    const savedBingoItems = localStorage.getItem('bingoItems');
+                    const savedCheckedItems = localStorage.getItem('checkedItems');
 
                     if (savedParticipants) {
                         participants = JSON.parse(savedParticipants);
@@ -975,6 +987,12 @@
                     }
                     if (savedSettings) {
                         settings = JSON.parse(savedSettings);
+                    }
+                    if (savedBingoItems) {
+                        bingoItems = JSON.parse(savedBingoItems);
+                    }
+                    if (savedCheckedItems) {
+                        checkedItems = new Set(JSON.parse(savedCheckedItems));
                     }
                     console.log('localStorage에서 데이터를 로드했습니다.');
                 }
@@ -989,6 +1007,8 @@
                     totalGroups: 8,
                     maxMembersPerGroup: 6
                 };
+                bingoItems = [];
+                checkedItems = new Set();
             }
         }
 
@@ -1006,11 +1026,14 @@
                             totalGroups: 8,
                             maxMembersPerGroup: 6
                         };
+                        bingoItems = data.bingoItems || [];
+                        checkedItems = new Set(data.checkedItems || []);
                         
                         saveData();
                         updateDisplay();
                         updateGroupAssignment();
                         updateGroupCountDisplay();
+                        updateBingoItemsList();
                         
                         alert('외부 파일에서 데이터를 성공적으로 로드했습니다.');
                     } else {
@@ -1113,10 +1136,13 @@
                     totalGroups: 8,
                     maxMembersPerGroup: 6
                 };
+                bingoItems = [];
+                checkedItems = new Set();
                 initializeGroups();
                 saveData();
                 updateDisplay();
                 updateGroupAssignment();
+                updateBingoItemsList();
             }
         }
 
@@ -1550,7 +1576,9 @@
                     participants: participants,
                     groups: groups,
                     scores: scores,
-                    settings: settings
+                    settings: settings,
+                    bingoItems: bingoItems,
+                    checkedItems: Array.from(checkedItems)
                 };
                 
                 const filePath = await window.electronAPI.saveFileAs(data);
@@ -1583,11 +1611,14 @@
                             totalGroups: 8,
                             maxMembersPerGroup: 6
                         };
+                        bingoItems = data.bingoItems || [];
+                        checkedItems = new Set(data.checkedItems || []);
                         
                         saveData();
                         updateDisplay();
                         updateGroupAssignment();
                         updateGroupCountDisplay();
+                        updateBingoItemsList();
                         
                         alert('데이터가 성공적으로 복원되었습니다.');
                     }
@@ -1598,9 +1629,6 @@
             }
         }
 
-        // 빙고 게임 관련 변수
-        let bingoItems = [];
-        let checkedItems = new Set(); // 체크된 항목들을 저장
 
         // 빙고 항목 등록
         function addBingoItems() {
@@ -1625,6 +1653,7 @@
 
             input.value = '';
             updateBingoItemsList();
+            saveData(); // 데이터 저장
             alert(`${addedCount}개의 빙고 항목이 등록되었습니다.`);
         }
 
@@ -1634,6 +1663,7 @@
                 bingoItems = [];
                 checkedItems.clear(); // 체크된 항목들도 초기화
                 updateBingoItemsList();
+                saveData(); // 데이터 저장
             }
         }
 
@@ -1693,6 +1723,7 @@
                 checkedItems.add(item);
             }
             updateBingoItemsList();
+            saveData(); // 데이터 저장
         }
 
 
