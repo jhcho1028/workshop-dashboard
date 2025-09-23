@@ -577,6 +577,7 @@
         <div class="tab-navigation">
             <button class="tab-button active" onclick="switchTab('dashboard')">대시보드</button>
             <button class="tab-button" onclick="switchTab('settings')">설정</button>
+            <button class="tab-button" onclick="switchTab('etc')">기타</button>
         </div>
 
         <!-- 대시보드 탭 -->
@@ -642,8 +643,6 @@
         <!-- 설정 탭 -->
         <div id="settings-tab" class="tab-content">
             <div class="settings-content">
-                <h2 style="margin-bottom: 30px; color: #4a5568; text-align: center;">워크샵 설정</h2>
-                
                 <!-- 참가자 관리 -->
                 <div class="form-group">
                     <label for="excelInput">참가자 등록 (엑셀 복사/붙여넣기):</label>
@@ -693,6 +692,126 @@
                         <!-- 조별 편성 인터페이스가 여기에 표시됩니다 -->
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- 기타 탭 -->
+        <div id="etc-tab" class="tab-content">
+            <div class="settings-content">
+                <!-- 워크샵 참고 사이트 -->
+                <div class="form-group">
+                    <h3 style="margin-bottom: 20px; color: #4a5568;">유용한 참고 사이트</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                        <div style="background: #f8f9fa; border-radius: 10px; padding: 20px; border: 1px solid #e2e8f0;">
+                            <h4 style="margin-bottom: 15px; color: #4a5568;">워크샵 도구</h4>
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                <a href="https://lazygyu.github.io/roulette/" target="_blank" style="color: #667eea; text-decoration: none; padding: 8px; background: white; border-radius: 6px; border: 1px solid #e2e8f0; transition: all 0.2s ease;">
+                                    🎯 마블 룰렛 - 당첨자 뽑기
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div style="background: #f8f9fa; border-radius: 10px; padding: 20px; border: 1px solid #e2e8f0;">
+                            <h4 style="margin-bottom: 15px; color: #4a5568;">시간 관리</h4>
+                            
+                            <!-- 타이머 -->
+                            <div style="margin-bottom: 20px;">
+                                <h5 style="margin-bottom: 10px; color: #4a5568;">⏰ 타이머</h5>
+                                <div style="text-align: center;">
+                                    <div id="timerDisplay" style="font-size: 36px; font-weight: bold; color: #4a5568; margin-bottom: 10px; font-family: 'Courier New', monospace;">
+                                        00:00:00
+                                    </div>
+                                    <div style="display: flex; gap: 8px; justify-content: center; margin-bottom: 10px;">
+                                        <input type="number" id="timerMinutes" placeholder="분" min="0" max="59" 
+                                               style="width: 60px; padding: 6px; border: 1px solid #e2e8f0; border-radius: 4px; text-align: center; font-size: 14px;">
+                                        <span style="font-size: 16px; color: #718096;">:</span>
+                                        <input type="number" id="timerSeconds" placeholder="초" min="0" max="59" 
+                                               style="width: 60px; padding: 6px; border: 1px solid #e2e8f0; border-radius: 4px; text-align: center; font-size: 14px;">
+                                    </div>
+                                    <div style="display: flex; gap: 8px; justify-content: center;">
+                                        <button class="btn" onclick="startTimer()" id="timerStartBtn" style="padding: 6px 12px; font-size: 12px;">시작</button>
+                                        <button class="btn btn-secondary" onclick="pauseTimer()" id="timerPauseBtn" disabled style="padding: 6px 12px; font-size: 12px;">정지</button>
+                                        <button class="btn btn-secondary" onclick="resetTimer()" style="padding: 6px 12px; font-size: 12px;">초기화</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 스톱워치 -->
+                            <div>
+                                <h5 style="margin-bottom: 10px; color: #4a5568;">⏱️ 스톱워치</h5>
+                                <div style="text-align: center;">
+                                    <div id="stopwatchDisplay" style="font-size: 36px; font-weight: bold; color: #4a5568; margin-bottom: 10px; font-family: 'Courier New', monospace;">
+                                        00:00:00
+                                    </div>
+                                    <div style="display: flex; gap: 8px; justify-content: center;">
+                                        <button class="btn" onclick="startStopwatch()" id="stopwatchStartBtn" style="padding: 6px 12px; font-size: 12px;">시작</button>
+                                        <button class="btn btn-secondary" onclick="pauseStopwatch()" id="stopwatchPauseBtn" disabled style="padding: 6px 12px; font-size: 12px;">정지</button>
+                                        <button class="btn btn-secondary" onclick="resetStopwatch()" style="padding: 6px 12px; font-size: 12px;">초기화</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 카카오톡 오픈채팅방 -->
+                <div class="form-group">
+                    <h3 style="margin-bottom: 20px; color: #4a5568;">카카오톡 오픈채팅방</h3>
+                    <div style="background: #f8f9fa; border-radius: 10px; padding: 20px; border: 1px solid #e2e8f0;">
+                        <div style="margin-bottom: 15px;">
+                            <label style="font-size: 14px; color: #4a5568; font-weight: 600; display: block; margin-bottom: 8px;">오픈채팅방 주소:</label>
+                            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                                <input type="text" id="kakaoChatUrl" placeholder="https://open.kakao.com/o/..." 
+                                       style="flex: 1; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 14px;">
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="btn" onclick="copyChatUrl()" style="flex: 1; padding: 10px; font-size: 14px;">주소 복사</button>
+                                <button class="btn btn-secondary" onclick="openChatRoom()" style="flex: 1; padding: 10px; font-size: 14px;">채팅방 열기</button>
+                            </div>
+                        </div>
+                        
+                        <!-- 채팅방 정보 표시 -->
+                        <div id="chatRoomInfo" style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 15px; display: none;">
+                            <div style="font-size: 16px; font-weight: bold; color: #4a5568; margin-bottom: 10px;">
+                                📱 채팅방 정보
+                            </div>
+                            <div style="font-size: 14px; color: #718096; margin-bottom: 8px;">
+                                <strong>주소:</strong> <span id="displayChatUrl">-</span>
+                            </div>
+                            <div style="font-size: 12px; color: #a0aec0;">
+                                💡 참가자들에게 QR코드나 주소를 공유하여 채팅방에 참여하도록 안내하세요
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 빙고 게임 -->
+                <div class="form-group">
+                    <h3 style="margin-bottom: 20px; color: #4a5568;">빙고 게임</h3>
+                    
+                    <!-- 빙고 항목 등록 -->
+                    <div style="background: #f8f9fa; border-radius: 10px; padding: 20px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 15px; color: #4a5568;">빙고 항목 등록</h4>
+                        <div style="margin-bottom: 15px;">
+                            <label style="font-size: 14px; color: #4a5568; font-weight: 600; display: block; margin-bottom: 8px;">빙고 항목 입력 (각 줄에 하나씩):</label>
+                            <textarea id="bingoItemsInput" rows="6" placeholder="예: 아이디어 발상&#10;브레인스토밍&#10;토론 참여&#10;질문하기&#10;피드백 주기"></textarea>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn" onclick="addBingoItems()" style="flex: 1;">빙고 항목 등록</button>
+                            <button class="btn btn-secondary" onclick="clearBingoItems()" style="flex: 1;">목록 초기화</button>
+                        </div>
+                    </div>
+                    
+                    
+                    <!-- 등록된 빙고 항목 목록 -->
+                    <div style="background: #f8f9fa; border-radius: 10px; padding: 20px; border: 1px solid #e2e8f0; margin-top: 20px;">
+                        <h4 style="margin-bottom: 15px; color: #4a5568;">등록된 빙고 항목 목록</h4>
+                        <div id="bingoItemsList" style="max-height: 200px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; background: white;">
+                            <!-- 빙고 항목 목록이 여기에 표시됩니다 -->
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -904,6 +1023,10 @@
                 if (tabName === 'settings') {
                     updateGroupAssignment();
                     updateGroupCountDisplay();
+                } else if (tabName === 'etc') {
+                    // 기타 탭에서는 특별한 초기화 작업이 필요하면 여기에 추가
+                    updateBingoItemsList();
+                    console.log('기타 탭이 활성화되었습니다.');
                 }
             } catch (error) {
                 console.error('탭 전환 중 오류 발생:', error);
@@ -1440,6 +1563,268 @@
                 console.error('데이터 업로드 중 오류 발생:', error);
                 alert('데이터 업로드에 실패했습니다. 파일 형식을 확인해주세요.');
             }
+        }
+
+        // 빙고 게임 관련 변수
+        let bingoItems = [];
+        let checkedItems = new Set(); // 체크된 항목들을 저장
+
+        // 빙고 항목 등록
+        function addBingoItems() {
+            const input = document.getElementById('bingoItemsInput');
+            const data = input.value.trim();
+            
+            if (!data) {
+                alert('빙고 항목을 입력해주세요.');
+                return;
+            }
+
+            const lines = data.split('\n');
+            let addedCount = 0;
+
+            lines.forEach(line => {
+                const item = line.trim();
+                if (item && !bingoItems.includes(item)) {
+                    bingoItems.push(item);
+                    addedCount++;
+                }
+            });
+
+            input.value = '';
+            updateBingoItemsList();
+            alert(`${addedCount}개의 빙고 항목이 등록되었습니다.`);
+        }
+
+        // 빙고 항목 목록 초기화
+        function clearBingoItems() {
+            if (confirm('모든 빙고 항목을 삭제하시겠습니까?')) {
+                bingoItems = [];
+                checkedItems.clear(); // 체크된 항목들도 초기화
+                updateBingoItemsList();
+            }
+        }
+
+        // 빙고 항목 목록 업데이트
+        function updateBingoItemsList() {
+            const list = document.getElementById('bingoItemsList');
+            list.innerHTML = '';
+
+            if (bingoItems.length === 0) {
+                list.innerHTML = '<div style="text-align: center; color: #a0aec0; padding: 20px;">등록된 빙고 항목이 없습니다.</div>';
+                return;
+            }
+
+            const grid = document.createElement('div');
+            grid.style.cssText = `
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 1px;
+                background: #e2e8f0;
+            `;
+
+            bingoItems.forEach((item, index) => {
+                const itemDiv = document.createElement('div');
+                const isChecked = checkedItems.has(item);
+                
+                itemDiv.style.cssText = `
+                    background: ${isChecked ? '#4ade80' : 'white'};
+                    color: ${isChecked ? 'white' : '#4a5568'};
+                    padding: 8px 12px;
+                    font-size: 13px;
+                    border-radius: 2px;
+                    transition: all 0.2s ease;
+                    cursor: pointer;
+                    position: relative;
+                    text-align: center;
+                    font-weight: ${isChecked ? 'bold' : 'normal'};
+                `;
+                
+                itemDiv.innerHTML = `
+                    <span>${item}</span>
+                    ${isChecked ? '<div style="position: absolute; top: 2px; right: 2px; font-size: 12px;">✓</div>' : ''}
+                `;
+                
+                // 클릭으로 체크/언체크
+                itemDiv.onclick = () => toggleBingoItem(item);
+                grid.appendChild(itemDiv);
+            });
+
+            list.appendChild(grid);
+        }
+
+        // 빙고 항목 체크/언체크 토글
+        function toggleBingoItem(item) {
+            if (checkedItems.has(item)) {
+                checkedItems.delete(item);
+            } else {
+                checkedItems.add(item);
+            }
+            updateBingoItemsList();
+        }
+
+
+        // 타이머 관련 변수
+        let timerInterval = null;
+        let timerTimeLeft = 0;
+        let timerRunning = false;
+
+        // 스톱워치 관련 변수
+        let stopwatchInterval = null;
+        let stopwatchTime = 0;
+        let stopwatchRunning = false;
+
+        // 타이머 시작
+        function startTimer() {
+            const minutes = parseInt(document.getElementById('timerMinutes').value) || 0;
+            const seconds = parseInt(document.getElementById('timerSeconds').value) || 0;
+            
+            if (minutes === 0 && seconds === 0) {
+                alert('시간을 입력해주세요.');
+                return;
+            }
+            
+            timerTimeLeft = minutes * 60 + seconds;
+            timerRunning = true;
+            
+            document.getElementById('timerStartBtn').disabled = true;
+            document.getElementById('timerPauseBtn').disabled = false;
+            document.getElementById('timerMinutes').disabled = true;
+            document.getElementById('timerSeconds').disabled = true;
+            
+            timerInterval = setInterval(() => {
+                timerTimeLeft--;
+                updateTimerDisplay();
+                
+                if (timerTimeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timerRunning = false;
+                    document.getElementById('timerStartBtn').disabled = false;
+                    document.getElementById('timerPauseBtn').disabled = true;
+                    document.getElementById('timerMinutes').disabled = false;
+                    document.getElementById('timerSeconds').disabled = false;
+                    
+                    // 타이머 완료 알림
+                    alert('⏰ 타이머가 완료되었습니다!');
+                }
+            }, 1000);
+        }
+
+        // 타이머 정지
+        function pauseTimer() {
+            if (timerRunning) {
+                clearInterval(timerInterval);
+                timerRunning = false;
+                document.getElementById('timerStartBtn').disabled = false;
+                document.getElementById('timerPauseBtn').disabled = true;
+            }
+        }
+
+        // 타이머 초기화
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timerRunning = false;
+            timerTimeLeft = 0;
+            
+            document.getElementById('timerStartBtn').disabled = false;
+            document.getElementById('timerPauseBtn').disabled = true;
+            document.getElementById('timerMinutes').disabled = false;
+            document.getElementById('timerSeconds').disabled = false;
+            document.getElementById('timerMinutes').value = '';
+            document.getElementById('timerSeconds').value = '';
+            
+            updateTimerDisplay();
+        }
+
+        // 타이머 표시 업데이트
+        function updateTimerDisplay() {
+            const hours = Math.floor(timerTimeLeft / 3600);
+            const minutes = Math.floor((timerTimeLeft % 3600) / 60);
+            const seconds = timerTimeLeft % 60;
+            
+            const display = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('timerDisplay').textContent = display;
+        }
+
+        // 스톱워치 시작
+        function startStopwatch() {
+            stopwatchRunning = true;
+            
+            document.getElementById('stopwatchStartBtn').disabled = true;
+            document.getElementById('stopwatchPauseBtn').disabled = false;
+            
+            stopwatchInterval = setInterval(() => {
+                stopwatchTime++;
+                updateStopwatchDisplay();
+            }, 1000);
+        }
+
+        // 스톱워치 정지
+        function pauseStopwatch() {
+            if (stopwatchRunning) {
+                clearInterval(stopwatchInterval);
+                stopwatchRunning = false;
+                document.getElementById('stopwatchStartBtn').disabled = false;
+                document.getElementById('stopwatchPauseBtn').disabled = true;
+            }
+        }
+
+        // 스톱워치 초기화
+        function resetStopwatch() {
+            clearInterval(stopwatchInterval);
+            stopwatchRunning = false;
+            stopwatchTime = 0;
+            
+            document.getElementById('stopwatchStartBtn').disabled = false;
+            document.getElementById('stopwatchPauseBtn').disabled = true;
+            
+            updateStopwatchDisplay();
+        }
+
+        // 스톱워치 표시 업데이트
+        function updateStopwatchDisplay() {
+            const hours = Math.floor(stopwatchTime / 3600);
+            const minutes = Math.floor((stopwatchTime % 3600) / 60);
+            const seconds = stopwatchTime % 60;
+            
+            const display = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('stopwatchDisplay').textContent = display;
+        }
+
+        // 카카오톡 오픈채팅방 관련 함수들
+        
+        // 채팅방 주소 복사
+        function copyChatUrl() {
+            const chatUrl = document.getElementById('kakaoChatUrl').value.trim();
+            
+            if (!chatUrl) {
+                alert('복사할 주소가 없습니다. 먼저 오픈채팅방 주소를 입력해주세요.');
+                return;
+            }
+            
+            navigator.clipboard.writeText(chatUrl).then(() => {
+                alert('채팅방 주소가 클립보드에 복사되었습니다!');
+            }).catch(() => {
+                // 클립보드 API가 지원되지 않는 경우 대체 방법
+                const textArea = document.createElement('textarea');
+                textArea.value = chatUrl;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('채팅방 주소가 클립보드에 복사되었습니다!');
+            });
+        }
+        
+        // 채팅방 열기
+        function openChatRoom() {
+            const chatUrl = document.getElementById('kakaoChatUrl').value.trim();
+            
+            if (!chatUrl) {
+                alert('열 주소가 없습니다. 먼저 오픈채팅방 주소를 입력해주세요.');
+                return;
+            }
+            
+            window.open(chatUrl, '_blank');
         }
     </script>
 </body>
