@@ -793,7 +793,7 @@
                     <div style="background: #f8f9fa; border-radius: 10px; padding: 20px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
                         <h4 style="margin-bottom: 15px; color: #4a5568;">문장 입력</h4>
                         <div style="margin-bottom: 15px;">
-                            <label style="font-size: 14px; color: #4a5568; font-weight: 600; display: block; margin-bottom: 8px;">퍼즐로 만들 문장을 입력하세요:</label>
+                            <label style="font-size: 10px; color: #4a5568; font-weight: 600; display: block; margin-bottom: 8px;">퍼즐로 만들 문장을 입력하세요:</label>
                             <input type="text" id="puzzleSentence" placeholder="예: 오늘은 모두 함께 웃어보아요" 
                                    style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 16px;">
                         </div>
@@ -826,8 +826,8 @@
                     <div style="background: #f8f9fa; border-radius: 10px; padding: 20px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
                         <h4 style="margin-bottom: 15px; color: #4a5568;">빙고 항목 등록</h4>
                         <div style="margin-bottom: 15px;">
-                            <label style="font-size: 14px; color: #4a5568; font-weight: 600; display: block; margin-bottom: 8px;">빙고 항목 입력 (각 줄에 하나씩):</label>
-                            <textarea id="bingoItemsInput" rows="6" placeholder="예: 아이디어 발상&#10;브레인스토밍&#10;토론 참여&#10;질문하기&#10;피드백 주기"></textarea>
+                            <label style="font-size: 10px; color: #4a5568; font-weight: 600; display: block; margin-bottom: 8px;">빙고 항목 입력 (각 줄에 하나씩):</label>
+                            <textarea id="bingoItemsInput" rows="3" placeholder="예: 지금 먹고싶은 음식&#10;치킨&#10;피자"></textarea>
                         </div>
                         <div style="display: flex; gap: 10px;">
                             <button class="btn" onclick="addBingoItems()" style="flex: 1;">빙고 항목 등록</button>
@@ -839,7 +839,7 @@
                     <!-- 등록된 빙고 항목 목록 -->
                     <div style="background: #f8f9fa; border-radius: 10px; padding: 20px; border: 1px solid #e2e8f0; margin-top: 20px;">
                         <h4 style="margin-bottom: 15px; color: #4a5568;">등록된 빙고 항목 목록</h4>
-                        <div id="bingoItemsList" style="max-height: 200px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; background: white;">
+                        <div id="bingoItemsList" style="max-height: 400px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; background: white;">
                             <!-- 빙고 항목 목록이 여기에 표시됩니다 -->
                         </div>
                     </div>
